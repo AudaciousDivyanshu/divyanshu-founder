@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
@@ -34,3 +35,46 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+=======
+# Divyanshu Founder
+
+Personal founder portfolio featuring Orion Helix, AI innovation, product development, and the journey of building intelligent systems.
+
+## About
+
+This portfolio showcases my work as a founder, developer, and builder focused on creating intelligent products and next-generation AI-powered workspaces.
+
+The project highlights:
+
+* Orion Helix
+* Singularity Horizon
+* AI & Software Projects
+* Product Development Journey
+* Vision for Human–AI Collaboration
+
+## Technologies Used
+
+* Next.js
+* React
+* TypeScript
+* Tailwind CSS
+* Framer Motion
+* Three.js
+* Vercel
+
+## Featured Project
+
+### Orion Helix
+
+Orion Helix is a context-aware AI workspace designed to unify development, collaboration, research, and execution into a single intelligent environment.
+
+## Live Portfolio
+
+Coming Soon
+
+## Connect
+
+GitHub: https://github.com/divyanshu-founder
+
+Built with passion for innovation, intelligent systems, and the future of AI.
+>>>>>>> 569a5e425d01d3a64c55a9824a47b16058bdda09
