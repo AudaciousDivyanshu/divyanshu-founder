@@ -1,5 +1,6 @@
 "use client";
 
+import { supabase } from "@/lib/supabase";
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, ArrowRight, CheckCircle2 } from "lucide-react";
@@ -58,6 +59,7 @@ export default function ContactSection() {
     message: ""
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const [headerMousePosition, setHeaderMousePosition] = useState({ x: 0, y: 0 });
   const headerRef = useRef<HTMLDivElement>(null);
@@ -77,22 +79,43 @@ export default function ContactSection() {
 
   const roles: RoleType[] = ["Founder", "Developer", "Researcher", "Designer", "Investor", "Student"];
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     if (!form.name || !form.email) return;
 
-    // Supabase payload simulation
-    const submissionData = {
-      name: form.name,
-      email: form.email,
-      role: form.role,
-      project: form.project,
-      message: form.message,
-      created_at: new Date().toISOString(),
-    };
-    console.log("Supabase Integration Payload:", submissionData);
+    try {
+      setIsLoading(true);
 
-    setIsSubmitted(true);
+      const { error } = await supabase
+        .from("contact_submissions")
+        .insert([
+          {
+            name: form.name,
+            email: form.email,
+            role: form.role,
+            message: `
+Project: ${form.project}
+
+${form.message}
+          `,
+          },
+        ]);
+
+      if (error) {
+        console.error(error);
+        alert("Failed to send message.");
+        return;
+      }
+
+      setIsSubmitted(true);
+
+    } catch (err) {
+      console.error(err);
+      alert("Something went wrong.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -146,7 +169,7 @@ export default function ContactSection() {
       </div>
 
       <div className="w-full mx-auto relative z-10 flex flex-col items-center">
-        
+
         {/* Header Section (Outside Card Box) */}
         <motion.div
           ref={headerRef}
@@ -191,7 +214,7 @@ export default function ContactSection() {
           {/* Form & Success States */}
           <AnimatePresence mode="wait">
             {!isSubmitted ? (
-              <motion.form 
+              <motion.form
                 key="form-fields"
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -246,11 +269,10 @@ export default function ContactSection() {
                           key={role}
                           type="button"
                           onClick={() => setForm({ ...form, role: isSelected ? "" : role })}
-                          className={`px-5 py-2.5 rounded-full border text-xs font-semibold tracking-wider transition-all duration-300 cursor-pointer select-none ${
-                            isSelected 
-                              ? "border-[#7c3aed] bg-gradient-to-r from-[#7c3aed]/20 to-[#3b82f6]/20 text-white shadow-[0_0_15px_rgba(124,58,237,0.3)]" 
-                              : "border-white/10 bg-white/[0.02] text-white/60 hover:border-white/30 hover:bg-white/[0.06] hover:text-white"
-                          }`}
+                          className={`px-5 py-2.5 rounded-full border text-xs font-semibold tracking-wider transition-all duration-300 cursor-pointer select-none ${isSelected
+                            ? "border-[#7c3aed] bg-gradient-to-r from-[#7c3aed]/20 to-[#3b82f6]/20 text-white shadow-[0_0_15px_rgba(124,58,237,0.3)]"
+                            : "border-white/10 bg-white/[0.02] text-white/60 hover:border-white/30 hover:bg-white/[0.06] hover:text-white"
+                            }`}
                         >
                           {role}
                         </motion.button>
@@ -291,11 +313,11 @@ export default function ContactSection() {
 
                 {/* Submit Trigger */}
                 <MagneticButton>
-                  Start The Conversation
+                  {isLoading ? "Sending..." : "Start The Conversation"}
                 </MagneticButton>
               </motion.form>
             ) : (
-              <motion.div 
+              <motion.div
                 key="success-card"
                 initial={{ opacity: 0, scale: 0.96 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -306,14 +328,14 @@ export default function ContactSection() {
                 <div className="w-16 h-16 rounded-full border border-emerald-500/30 bg-emerald-950/20 flex items-center justify-center text-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.2)]">
                   <CheckCircle2 className="w-8 h-8 animate-pulse" />
                 </div>
-                
+
                 <div className="space-y-2.5">
                   <h3 className="font-headline font-black text-3xl text-white tracking-tight">Message Received</h3>
                   <p className="text-gray-300 font-body text-base max-w-md leading-relaxed">
                     Thank you for reaching out. I'll personally review your submission and get back to you.
                   </p>
                 </div>
-                
+
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
@@ -364,7 +386,8 @@ export default function ContactSection() {
       </div>
 
       {/* Global CSS Style tag to force-override autofill styles and font families */}
-      <style dangerouslySetInnerHTML={{ __html: `
+      <style dangerouslySetInnerHTML={{
+        __html: `
         input:-webkit-autofill,
         input:-webkit-autofill:hover, 
         input:-webkit-autofill:focus, 
